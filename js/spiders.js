@@ -11,12 +11,6 @@ function run() {
     d3.json("data/spiders.json").then(function (data) {
         updateScene(data, configuration);
 
-        var spider;
-        var index;
-
-        // select all on mouse click and set the position for each id
-        
-
         // increment the configuration counter and update the drawing
         svg.on('click', function () {
             if (configuration == 4)
@@ -28,9 +22,9 @@ function run() {
     });
 
     // support functions
-    function selectPoint(d, angle) {
-        x = (d.width * Math.cos(angle)) + d.horizontal;
-        y = (d.length * Math.sin(angle)) + d.vertical + d.length;
+    function selectPoint(d, angle, randomic) {
+        x = (d.width * Math.cos(angle)) + randomic * d.horizontal;
+        y = (d.length * Math.sin(angle)) + randomic * d.vertical + d.length;
         return [x, y]
     }
 
@@ -39,12 +33,16 @@ function run() {
     }
 
     function drawNow(g) {
+
+        // randomizers for the starting position
+        randomic = Math.random()
+
         g.append("ellipse")
             .attr('cx', function (d) {
-                return d.horizontal
+                return randomic * d.horizontal
             })
             .attr('cy', function (d) {
-                return d.vertical + d.length
+                return randomic * d.vertical + d.length
             })
             .attr('rx', function (d) {
                 return d.width
@@ -60,7 +58,7 @@ function run() {
         // front right leg
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = selectPoint(d, -Math.PI / 4);
+                [x, y] = selectPoint(d, -Math.PI / 4, randomic);
                 s = sideLength(d.leg / 1.5)
                 return [x, y, x + s, y - s];
             })
@@ -72,7 +70,7 @@ function run() {
         // front left leg
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = selectPoint(d, -Math.PI * 3 / 4);
+                [x, y] = selectPoint(d, -Math.PI * 3 / 4, randomic);
                 s = sideLength(d.leg / 1.5)
                 return [x, y, x - s, y - s];
             })
@@ -84,7 +82,7 @@ function run() {
         // middle right leg 1
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = [d.horizontal + d.width, d.vertical + d.length];
+                [x, y] = [randomic * d.horizontal + d.width, randomic * d.vertical + d.length];
                 s = sideLength(d.leg / 1.5);
                 return [x, y, x + d.leg / 1.5, y + s];
             })
@@ -96,7 +94,7 @@ function run() {
         // middle left leg 1
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = [d.horizontal - d.width, d.vertical + d.length];
+                [x, y] = [randomic * d.horizontal - d.width, randomic * d.vertical + d.length];
                 s = sideLength(d.leg / 1.5);
                 return [x, y, x - d.leg / 1.5, y + s];
             })
@@ -108,7 +106,7 @@ function run() {
         // middle right leg 2
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = [d.horizontal + d.width, d.vertical + d.length];
+                [x, y] = [randomic * d.horizontal + d.width, randomic * d.vertical + d.length];
                 s = sideLength(d.leg * 3 / 4);
                 return [x, y, x + d.leg / 4, y - s, x + d.leg / 4 + s, y - s];
             })
@@ -120,7 +118,7 @@ function run() {
         // middle left leg 2
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = [d.horizontal - d.width, d.vertical + d.length];
+                [x, y] = [randomic * d.horizontal - d.width, randomic * d.vertical + d.length];
                 s = sideLength(d.leg * 3 / 4);
                 return [x, y, x - d.leg / 4, y - s, x - d.leg / 4 - s, y - s];
             })
@@ -132,7 +130,7 @@ function run() {
         // back right leg
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = selectPoint(d, Math.PI / 4);
+                [x, y] = selectPoint(d, Math.PI / 4, randomic);
                 s = sideLength(d.leg / 4)
                 return [x, y, x + s, y + s, x + s, y + d.leg];
             })
@@ -144,7 +142,7 @@ function run() {
         // back left leg
         g.append("polyline")
             .attr("points", function (d) {
-                [x, y] = selectPoint(d, Math.PI * 3 / 4);
+                [x, y] = selectPoint(d, Math.PI * 3 / 4, randomic);
                 s = sideLength(d.leg / 4)
                 return [x, y, x - s, y + s, x - s, y + d.leg];
             })
@@ -155,7 +153,7 @@ function run() {
 
         g.on("click", function () {
             d3.select(this)
-                .attr("class", "dead")
+                .attr("class", "dead");
         });
 
         // returning the modified object, it will be drawn
@@ -171,7 +169,7 @@ function run() {
 
         idx++;
         var currentConfiguration = data[configuration]["spiders"];
-        
+
         svg.selectAll("g[class^=alive]").data(currentConfiguration).join(
 
             // Enter
@@ -193,127 +191,252 @@ function run() {
             // Update
 
             function (update) {
-                tx = d3.transition().duration(700)
+                if (configuration != 0 && configuration != -1) {
+                    tx = d3.transition().duration(700)
 
-                update.select(".body")
-                    .transition(tx)
-                    .attr('cx', function (d) {
-                        return d.horizontal
-                    })
-                    .attr('cy', function (d) {
-                        return d.vertical + d.length
-                    })
-                    .attr('rx', function (d) {
-                        return d.width
-                    })
-                    .attr('ry', function (d) {
-                        return d.length
-                    })
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black")
-                    .attr("fill", "darkred");
+                    update.select(".body")
+                        .transition(tx)
+                        .attr('cx', function (d) {
+                            return d.horizontal
+                        })
+                        .attr('cy', function (d) {
+                            return d.vertical + d.length
+                        })
+                        .attr('rx', function (d) {
+                            return d.width
+                        })
+                        .attr('ry', function (d) {
+                            return d.length
+                        })
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black")
+                        .attr("fill", "darkred");
 
-                // front right leg
-                update.select(".front_right_leg")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = selectPoint(d, -Math.PI / 4);
-                        s = sideLength(d.leg / 1.5)
-                        return [x, y, x + s, y - s];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // front right leg
+                    update.select(".front_right_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, -Math.PI / 4, 1);
+                            s = sideLength(d.leg / 1.5)
+                            return [x, y, x + s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // front left leg
-                update.select(".front_left_leg")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = selectPoint(d, -Math.PI * 3 / 4);
-                        s = sideLength(d.leg / 1.5)
-                        return [x, y, x - s, y - s];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // front left leg
+                    update.select(".front_left_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, -Math.PI * 3 / 4, 1);
+                            s = sideLength(d.leg / 1.5)
+                            return [x, y, x - s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // middle right leg 1
-                update.select(".middle_right_leg_1")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = [d.horizontal + d.width, d.vertical + d.length];
-                        s = sideLength(d.leg / 1.5);
-                        return [x, y, x + d.leg / 1.5, y + s];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // middle right leg 1
+                    update.select(".middle_right_leg_1")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [d.horizontal + d.width, d.vertical + d.length];
+                            s = sideLength(d.leg / 1.5);
+                            return [x, y, x + d.leg / 1.5, y + s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // middle left leg 1
-                update.select(".middle_left_leg_1")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = [d.horizontal - d.width, d.vertical + d.length];
-                        s = sideLength(d.leg / 1.5);
-                        return [x, y, x - d.leg / 1.5, y + s];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // middle left leg 1
+                    update.select(".middle_left_leg_1")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [d.horizontal - d.width, d.vertical + d.length];
+                            s = sideLength(d.leg / 1.5);
+                            return [x, y, x - d.leg / 1.5, y + s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // middle right leg 2
-                update.select(".middle_right_leg_2")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = [d.horizontal + d.width, d.vertical + d.length];
-                        s = sideLength(d.leg * 3 / 4);
-                        return [x, y, x + d.leg / 4, y - s, x + d.leg / 4 + s, y - s];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // middle right leg 2
+                    update.select(".middle_right_leg_2")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [d.horizontal + d.width, d.vertical + d.length];
+                            s = sideLength(d.leg * 3 / 4);
+                            return [x, y, x + d.leg / 4, y - s, x + d.leg / 4 + s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // middle left leg 2
-                update.select(".middle_left_leg_2")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = [d.horizontal - d.width, d.vertical + d.length];
-                        s = sideLength(d.leg * 3 / 4);
-                        return [x, y, x - d.leg / 4, y - s, x - d.leg / 4 - s, y - s];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // middle left leg 2
+                    update.select(".middle_left_leg_2")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [d.horizontal - d.width, d.vertical + d.length];
+                            s = sideLength(d.leg * 3 / 4);
+                            return [x, y, x - d.leg / 4, y - s, x - d.leg / 4 - s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // back right leg
-                update.select(".back_right_leg")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = selectPoint(d, Math.PI / 4);
-                        s = sideLength(d.leg / 4)
-                        return [x, y, x + s, y + s, x + s, y + d.leg];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // back right leg
+                    update.select(".back_right_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, Math.PI / 4, 1);
+                            s = sideLength(d.leg / 4)
+                            return [x, y, x + s, y + s, x + s, y + d.leg];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                // back left leg
-                update.select(".back_left_leg")
-                    .transition(tx)
-                    .attr("points", function (d) {
-                        [x, y] = selectPoint(d, Math.PI * 3 / 4);
-                        s = sideLength(d.leg / 4)
-                        return [x, y, x - s, y + s, x - s, y + d.leg];
-                    })
-                    .attr("fill", "None")
-                    .attr("stroke-width", 5)
-                    .attr("stroke", "black");
+                    // back left leg
+                    update.select(".back_left_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, Math.PI * 3 / 4, 1);
+                            s = sideLength(d.leg / 4)
+                            return [x, y, x - s, y + s, x - s, y + d.leg];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
 
-                update.on("click", function () {
-                    d3.select(this)
-                        .attr("class", "dead")
-                });
+                    update.on("click", function () {
+                        d3.select(this)
+                            .attr("class", "dead");
+                    });
+                } else {
 
+                    randomic2 = Math.random()
+
+                    tx = d3.transition().duration(700)
+
+                    update.select(".body")
+                        .transition(tx)
+                        .attr('cx', function (d) {
+                            return randomic2*d.horizontal
+                        })
+                        .attr('cy', function (d) {
+                            return randomic2*d.vertical + d.length
+                        })
+                        .attr('rx', function (d) {
+                            return d.width
+                        })
+                        .attr('ry', function (d) {
+                            return d.length
+                        })
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black")
+                        .attr("fill", "darkred");
+
+                    // front right leg
+                    update.select(".front_right_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, -Math.PI / 4, randomic2);
+                            s = sideLength(d.leg / 1.5)
+                            return [x, y, x + s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // front left leg
+                    update.select(".front_left_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, -Math.PI * 3 / 4, randomic2);
+                            s = sideLength(d.leg / 1.5)
+                            return [x, y, x - s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // middle right leg 1
+                    update.select(".middle_right_leg_1")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [randomic2*d.horizontal + d.width, randomic2*d.vertical + d.length];
+                            s = sideLength(d.leg / 1.5);
+                            return [x, y, x + d.leg / 1.5, y + s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // middle left leg 1
+                    update.select(".middle_left_leg_1")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [randomic2*d.horizontal - d.width, randomic2*d.vertical + d.length];
+                            s = sideLength(d.leg / 1.5);
+                            return [x, y, x - d.leg / 1.5, y + s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // middle right leg 2
+                    update.select(".middle_right_leg_2")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [randomic2*d.horizontal + d.width, randomic2*d.vertical + d.length];
+                            s = sideLength(d.leg * 3 / 4);
+                            return [x, y, x + d.leg / 4, y - s, x + d.leg / 4 + s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // middle left leg 2
+                    update.select(".middle_left_leg_2")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = [randomic2*d.horizontal - d.width, randomic2*d.vertical + d.length];
+                            s = sideLength(d.leg * 3 / 4);
+                            return [x, y, x - d.leg / 4, y - s, x - d.leg / 4 - s, y - s];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // back right leg
+                    update.select(".back_right_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, Math.PI / 4, randomic2);
+                            s = sideLength(d.leg / 4)
+                            return [x, y, x + s, y + s, x + s, y + d.leg];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    // back left leg
+                    update.select(".back_left_leg")
+                        .transition(tx)
+                        .attr("points", function (d) {
+                            [x, y] = selectPoint(d, Math.PI * 3 / 4, randomic2);
+                            s = sideLength(d.leg / 4)
+                            return [x, y, x - s, y + s, x - s, y + d.leg];
+                        })
+                        .attr("fill", "None")
+                        .attr("stroke-width", 5)
+                        .attr("stroke", "black");
+
+                    update.on("click", function () {
+                        d3.select(this)
+                            .attr("class", "dead");
+                    });
+                }
             });
     }
 }
