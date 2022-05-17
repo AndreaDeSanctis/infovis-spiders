@@ -10,3 +10,8 @@ Cliccando su un ragno, invece, questo rimane schiacciato e non partecipa più al
 
 Test:
 Tested and working inside localhost python3 server
+
+Note:
+Per quanto riguarda la randomizzazione della posizione, ho preferito utilizzare comunque una configurazione
+fissa, a cui poi si va a moltiplicare un coefficiente di randomizzazione ad ogni ciclo, poichè diversamente
+ho riscontrato alcuni problemi nel disegno dei ragni

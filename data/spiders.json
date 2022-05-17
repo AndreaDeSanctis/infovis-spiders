@@ -4,8 +4,8 @@
 		"spiders": [
 			{
 				"id": "spider0",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 100,
+				"vertical": 300,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -13,8 +13,8 @@
 			},
 			{
 				"id": "spider1",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 400,
+				"vertical": 50,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -22,8 +22,8 @@
 			},
 			{
 				"id": "spider2",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 350,
+				"vertical": 200,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -31,8 +31,8 @@
 			},
 			{
 				"id": "spider3",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 250,
+				"vertical": 400,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -40,8 +40,8 @@
 			},
 			{
 				"id": "spider4",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 450,
+				"vertical": 150,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -49,8 +49,8 @@
 			},
 			{
 				"id": "spider5",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 650,
+				"vertical": 600,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -58,8 +58,8 @@
 			},
 			{
 				"id": "spider6",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 300,
+				"vertical": 100,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -67,7 +67,7 @@
 			},
 			{
 				"id": "spider7",
-				"horizontal": 25,
+				"horizontal": 50,
 				"vertical": 25,
 				"length": 25,
 				"width": 25,
@@ -76,8 +76,8 @@
 			},
 			{
 				"id": "spider8",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 800,
+				"vertical": 800,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
@@ -85,8 +85,8 @@
 			},
 			{
 				"id": "spider9",
-				"horizontal": 25,
-				"vertical": 25,
+				"horizontal": 730,
+				"vertical": 460,
 				"length": 25,
 				"width": 25,
 				"leg": 40,
